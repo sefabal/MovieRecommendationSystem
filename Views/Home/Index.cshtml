@@ -1,0 +1,48 @@
+﻿@model MovieRecommender.Models.ViewModels.IndexViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <br />
+
+    @for (int i = 0; i < Model.Movies.Count(); i = i + 3)
+    {
+        <div class="row">
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.Movies.ElementAt(i).Name</h5>
+                        <p class="card-text">@Model.Movies.ElementAt(i).ReleaseDate</p>
+                        <a target="_blank" href="@Model.Movies.ElementAt(i).ImdbLink" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.Movies.ElementAt(i + 1).Name</h5>
+                        <p class="card-text">@Model.Movies.ElementAt(i + 1).ReleaseDate</p>
+                        <a target="_blank" href="@Model.Movies.ElementAt(i+1).ImdbLink" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.Movies.ElementAt(i + 2).Name</h5>
+                        <p class="card-text">@Model.Movies.ElementAt(i + 2).ReleaseDate</p>
+                        <a target="_blank" href="@Model.Movies.ElementAt(i+2).ImdbLink" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+</div>
+
+<div class="d-flex justify-content-center">
+    <paging total-records="Model.TotalMovieCount" page-no="Model.Page" page-size="12">
+    </paging>
+</div>
