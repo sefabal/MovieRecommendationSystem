@@ -43,7 +43,8 @@ namespace MovieRecommender.Services
 
         public async Task<User> GetUserByName(string username)
         {
-            return await movieContext.Users.Include(x => x.Rates).FirstAsync(user => user.Username == username);
+            var user = await movieContext.Users.Include(x => x.Rates).FirstOrDefaultAsync(user => user.Username == username);
+            return user;
         }
 
         public async Task<IEnumerable<User>> GetUsers(int paginationSize, int page)

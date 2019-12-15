@@ -33,18 +33,52 @@ namespace MovieRecommender.Controllers
 
                     if (HttpContext.Session.Get<User>(SessionExtensions.UserKey) == default(User))
                     {
+                        currentUSer.Password = "";
                         currentUSer.Rates = new System.Collections.Generic.List<Rate>();
                         HttpContext.Session.Set<User>(SessionExtensions.UserKey, currentUSer);
                     }
                 }
             }
 
-            return View();
+            return Redirect("/Home/Index");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(User user)
+        {
+            if (!string.IsNullOrWhiteSpace(user.Username) && !string.IsNullOrWhiteSpace(user.Password))
+            {
+                var userCheck = await userService.GetUserByName(user.Username);
+
+                if (userCheck == null)
+                {
+                    await userService.AddUser(user);
+                } else
+                {
+                    return Redirect("Register");
+                }
+            }
+
+            return View("Login",user);
+        }
+
 
         public IActionResult Register()
         {
-            return View();
+            return View(new User());
+        }
+
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            var currentUser = HttpContext.Session.Get<User>(SessionExtensions.UserKey);
+
+            if (currentUser != default(User))
+            {
+                HttpContext.Session.Set<User>(SessionExtensions.UserKey, null);
+            }
+
+            return View("Login", new User());
         }
     }
 }
