@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -21,8 +23,29 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if ((Context.Session.Get<User>("USERKEY") == default(User)))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Login">Login</a>
+                            </li>
+                        }
                     </ul>
                 </div>
+                @if ((Context.Session.Get<User>("USERKEY") != default(User)))
+                {
+                    User user = Context.Session.Get<User>("USERKEY");
+                    <div class="nav navbar-nav navbar-right">
+                        <ul class="navbar-nav ml-auto mr-sm-2">
+                            <li class="nav-item">
+                                <text>Username : </text>
+                            </li>
+                            <li class="nav-item">
+                                <text>@user.Username</text>
+                            </li>
+                        </ul>
+                        <button class="nav-item btn btn-warning">Logout</button>
+                    </div>
+                }
             </div>
         </nav>
     </header>

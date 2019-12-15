@@ -12,6 +12,8 @@ namespace MovieRecommender.Services
 
         Task<User> GetUser(int userId);
 
+        Task<User> GetUserByName(string username);
+
         Task<bool> CheckUser(string userName, string password);
     }
 }
