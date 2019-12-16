@@ -15,6 +15,13 @@
                     <div class="card-body">
                         <h5 class="card-title">@Model.Movies.ElementAt(i).Name</h5>
                         <p class="card-text">@Model.Movies.ElementAt(i).ReleaseDate</p>
+                        @if (Model.IsLoggedIn)
+                        {
+                            @if (Model.Movies.ElementAt(i).Rates != null)
+                            {
+                                <p class="card-text">Rate : @Model.Movies.ElementAt(i).Rates.FirstOrDefault().MovieRate</p>
+                            }
+                        }
                         <a target="_blank" href="@Model.Movies.ElementAt(i).ImdbLink" class="btn btn-primary">Details</a>
                     </div>
                 </div>
@@ -24,6 +31,13 @@
                     <div class="card-body">
                         <h5 class="card-title">@Model.Movies.ElementAt(i + 1).Name</h5>
                         <p class="card-text">@Model.Movies.ElementAt(i + 1).ReleaseDate</p>
+                        @if (Model.IsLoggedIn)
+                        {
+                            @if (Model.Movies.ElementAt(i+1).Rates != null)
+                            {
+                                <p class="card-text">Rate : @Model.Movies.ElementAt(i+1).Rates.FirstOrDefault().MovieRate</p>
+                            }
+                        }
                         <a target="_blank" href="@Model.Movies.ElementAt(i+1).ImdbLink" class="btn btn-primary">Details</a>
                     </div>
                 </div>
@@ -33,6 +47,13 @@
                     <div class="card-body">
                         <h5 class="card-title">@Model.Movies.ElementAt(i + 2).Name</h5>
                         <p class="card-text">@Model.Movies.ElementAt(i + 2).ReleaseDate</p>
+                        @if (Model.IsLoggedIn)
+                        {
+                            @if (Model.Movies.ElementAt(i+2).Rates != null)
+                            {
+                                <p class="card-text">Rate : @Model.Movies.ElementAt(i+2).Rates.FirstOrDefault().MovieRate</p>
+                            }
+                        }
                         <a target="_blank" href="@Model.Movies.ElementAt(i+2).ImdbLink" class="btn btn-primary">Details</a>
                     </div>
                 </div>

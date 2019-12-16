@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace MovieRecommender.Models.ViewModels
 {
@@ -12,5 +9,7 @@ namespace MovieRecommender.Models.ViewModels
         public int TotalMovieCount { get; set; }
 
         public int Page { get; set; }
+
+        public bool IsLoggedIn { get; set; }
     }
 }

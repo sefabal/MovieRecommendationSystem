@@ -1,11 +1,9 @@
-﻿using System;
+﻿using KNNCalculation;
+using Microsoft.EntityFrameworkCore;
+using MovieRecommender.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using KNNCalculation;
-using MathWorks.MATLAB.NET.Arrays;
-using Microsoft.EntityFrameworkCore;
-using MovieRecommender.Models;
 
 namespace MovieRecommender.Services
 {
@@ -27,6 +25,11 @@ namespace MovieRecommender.Services
             await this.movieContext.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<Movie> GetMovieById(int id)
+        {
+            return await movieContext.Movies.FirstOrDefaultAsync(mov => mov.Id == id);
         }
 
         public async Task<int> GetMovieCount()

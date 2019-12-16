@@ -11,5 +11,7 @@ namespace MovieRecommender.Services
         Task<IEnumerable<Movie>> GetMovies(int paginationSize,int page);
 
         Task<int> GetMovieCount();
+
+        Task<Movie> GetMovieById(int id);
     }
 }

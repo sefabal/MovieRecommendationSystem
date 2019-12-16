@@ -1,0 +1,36 @@
+﻿@model IEnumerable<MovieRecommender.Models.Rate>
+
+@{
+    ViewData["Title"] = "Rated Movies";
+}
+
+<h1>Rated Movies</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Movie Name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MovieRate)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a target="_blank" href="@item.Movie.ImdbLink">@item.Movie.Name</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MovieRate)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

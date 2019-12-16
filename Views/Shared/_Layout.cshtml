@@ -29,6 +29,12 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Login">Login</a>
                             </li>
                         }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="RatedMovies">Rates</a>
+                            </li>
+                        }
                     </ul>
                 </div>
                 @if ((Context.Session.Get<User>("USERKEY") != default(User)))
@@ -44,7 +50,7 @@
                             </li>
                         </ul>
                         <form class="form-inline" asp-controller="User" asp-action="Logout" formmethod="post">
-                            <button  type="submit" class="nav-item btn btn-warning my-2 my-sm-0">Logout</button>
+                            <button type="submit" class="nav-item btn btn-warning my-2 my-sm-0">Logout</button>
                         </form>
                     </div>
                 }

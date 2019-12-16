@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MovieRecommender.Models;
 using MovieRecommender.Models.ViewModels;
 using MovieRecommender.Services;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MovieRecommender.Controllers
 {
@@ -25,7 +21,7 @@ namespace MovieRecommender.Controllers
 
         private readonly MovieContext movieContext;
 
-        public HomeController(ILogger<HomeController> logger, IMovieServices movieService, IRatingService ratingService, IUserService userService,MovieContext movieContext)
+        public HomeController(ILogger<HomeController> logger, IMovieServices movieService, IRatingService ratingService, IUserService userService, MovieContext movieContext)
         {
             _logger = logger;
             this.movieServices = movieService;
@@ -42,7 +38,22 @@ namespace MovieRecommender.Controllers
             var movieList = await movieServices.GetMovies(paginationVal, pageVal - 1);
             var totalCount = await movieServices.GetMovieCount();
 
+            var currentUser = HttpContext.Session.Get<User>(SessionExtensions.UserKey);
             var viewModel = new IndexViewModel() { Movies = movieList, Page = pageVal, TotalMovieCount = totalCount };
+
+            if (currentUser != default(User))
+            {
+                viewModel.IsLoggedIn = true;
+                var user = await userService.GetUserByName(currentUser.Username);
+                for (int i = 0; i < user.Rates.Count; i++)
+                {
+                    var rate = user.Rates.ElementAt(i);
+                    var movieToRate = movieList.Where(movie => rate.MovieId == movie.Id).FirstOrDefault();
+                    if (movieToRate != null)
+                        movieToRate.Rates.Add(rate);
+                }
+            }
+
 
             return View(viewModel);
         }
@@ -131,7 +142,7 @@ namespace MovieRecommender.Controllers
             //    Console.WriteLine(e.Message);
             //}
             var user2 = await userService.GetUser(2);
-            await ratingService.PredictMovieRate(user2,3);
+            await ratingService.PredictMovieRate(user2, 3);
 
             return View();
         }

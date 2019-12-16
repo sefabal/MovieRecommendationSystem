@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieRecommender.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MovieRecommender.Services
@@ -43,7 +44,9 @@ namespace MovieRecommender.Services
 
         public async Task<User> GetUserByName(string username)
         {
-            var user = await movieContext.Users.Include(x => x.Rates).FirstOrDefaultAsync(user => user.Username == username);
+            var user = await movieContext.Users
+                            .Include(x => x.Rates)
+                            .FirstOrDefaultAsync(user => user.Username == username);
             return user;
         }
 

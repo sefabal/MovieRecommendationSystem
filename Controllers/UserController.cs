@@ -9,11 +9,13 @@ namespace MovieRecommender.Controllers
     public class UserController : Controller
     {
         private readonly IUserService userService;
-        // GET: /<controller>/
 
-        public UserController(IUserService userService)
+        private readonly IMovieServices movieServices;
+
+        public UserController(IUserService userService, IMovieServices movieServices)
         {
             this.userService = userService;
+            this.movieServices = movieServices;
         }
         public IActionResult Login()
         {
@@ -53,13 +55,14 @@ namespace MovieRecommender.Controllers
                 if (userCheck == null)
                 {
                     await userService.AddUser(user);
-                } else
+                }
+                else
                 {
                     return Redirect("Register");
                 }
             }
 
-            return View("Login",user);
+            return View("Login", user);
         }
 
 
@@ -76,6 +79,25 @@ namespace MovieRecommender.Controllers
             if (currentUser != default(User))
             {
                 HttpContext.Session.Set<User>(SessionExtensions.UserKey, null);
+            }
+
+            return View("Login", new User());
+        }
+
+        public async Task<IActionResult> RatedMovies()
+        {
+            var currentUser = HttpContext.Session.Get<User>(SessionExtensions.UserKey);
+
+            if (currentUser != default(User))
+            {
+                var user = await userService.GetUserByName(currentUser.Username);
+
+                foreach (Rate rate in user.Rates)
+                {
+                    rate.Movie = await movieServices.GetMovieById(rate.MovieId);
+                }
+
+                return View(user.Rates);
             }
 
             return View("Login", new User());
