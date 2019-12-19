@@ -12,10 +12,13 @@ namespace MovieRecommender.Controllers
 
         private readonly IMovieServices movieServices;
 
-        public UserController(IUserService userService, IMovieServices movieServices)
+        private readonly IRatingService ratingService;
+
+        public UserController(IUserService userService, IMovieServices movieServices, IRatingService ratingService)
         {
             this.userService = userService;
             this.movieServices = movieServices;
+            this.ratingService = ratingService;
         }
         public IActionResult Login()
         {
@@ -101,6 +104,15 @@ namespace MovieRecommender.Controllers
             }
 
             return View("Login", new User());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GiveRate(Rate rate)
+        {
+
+            await ratingService.AddRating(rate);
+
+            return Redirect("/");
         }
     }
 }

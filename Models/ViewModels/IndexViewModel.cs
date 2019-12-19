@@ -11,5 +11,7 @@ namespace MovieRecommender.Models.ViewModels
         public int Page { get; set; }
 
         public bool IsLoggedIn { get; set; }
+
+        public Rate rate { get; set; }
     }
 }

@@ -9,6 +9,7 @@
 
     @for (int i = 0; i < Model.Movies.Count(); i = i + 3)
     {
+        User currentUser = Context.Session.Get<User>(SessionExtensions.UserKey);
         <div class="row">
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
@@ -20,6 +21,19 @@
                             @if (Model.Movies.ElementAt(i).Rates != null)
                             {
                                 <p class="card-text">Rate : @Model.Movies.ElementAt(i).Rates.FirstOrDefault().MovieRate</p>
+                            }
+                            else
+                            {
+                                <form class="table" asp-controller="user" asp-action="GiveRate">
+                                    <table>
+                                        <tr>
+                                            <td><input type="hidden" asp-for="rate.MovieId" value="@Model.Movies.ElementAt(i).Id" /></td>
+                                            <td><input type="hidden" asp-for="rate.UserId" value="@currentUser.Id" /> </td>
+                                            <td><input class="input-group" type="number" asp-for="rate.MovieRate" placeholder="Rate" /></td>
+                                            <td><button class="btn btn-success" type="submit">Rate</button></td>
+                                        </tr>
+                                    </table>
+                                </form>
                             }
                         }
                         <a target="_blank" href="@Model.Movies.ElementAt(i).ImdbLink" class="btn btn-primary">Details</a>
@@ -33,9 +47,22 @@
                         <p class="card-text">@Model.Movies.ElementAt(i + 1).ReleaseDate</p>
                         @if (Model.IsLoggedIn)
                         {
-                            @if (Model.Movies.ElementAt(i+1).Rates != null)
+                            @if (Model.Movies.ElementAt(i + 1).Rates != null)
                             {
-                                <p class="card-text">Rate : @Model.Movies.ElementAt(i+1).Rates.FirstOrDefault().MovieRate</p>
+                                <p class="card-text">Rate : @Model.Movies.ElementAt(i + 1).Rates.FirstOrDefault().MovieRate</p>
+                            }
+                            else
+                            {
+                                <form class="table" asp-controller="user" asp-action="GiveRate">
+                                    <table>
+                                        <tr>
+                                            <td><input type="hidden" asp-for="rate.MovieId" value="@Model.Movies.ElementAt(i+1).Id" /></td>
+                                            <td><input type="hidden" asp-for="rate.UserId" value="@currentUser.Id" /> </td>
+                                            <td><input class="input-group" type="number" asp-for="rate.MovieRate" placeholder="Rate" /></td>
+                                            <td><button class="btn btn-success" type="submit">Rate</button></td>
+                                        </tr>
+                                    </table>
+                                </form>
                             }
                         }
                         <a target="_blank" href="@Model.Movies.ElementAt(i+1).ImdbLink" class="btn btn-primary">Details</a>
@@ -49,9 +76,22 @@
                         <p class="card-text">@Model.Movies.ElementAt(i + 2).ReleaseDate</p>
                         @if (Model.IsLoggedIn)
                         {
-                            @if (Model.Movies.ElementAt(i+2).Rates != null)
+                            @if (Model.Movies.ElementAt(i + 2).Rates != null)
                             {
-                                <p class="card-text">Rate : @Model.Movies.ElementAt(i+2).Rates.FirstOrDefault().MovieRate</p>
+                                <p class="card-text">Rate : @Model.Movies.ElementAt(i + 2).Rates.FirstOrDefault().MovieRate</p>
+                            }
+                            else
+                            {
+                                <form class="table" asp-controller="user" asp-action="GiveRate">
+                                    <table>
+                                        <tr>
+                                            <td><input type="hidden" asp-for="rate.MovieId" value="@Model.Movies.ElementAt(i+2).Id" /></td>
+                                            <td><input type="hidden" asp-for="rate.UserId" value="@currentUser.Id" /> </td>
+                                            <td><input class="input-group" type="number" asp-for="rate.MovieRate" placeholder="Rate" /></td>
+                                            <td><button class="btn btn-success" type="submit">Rate</button></td>
+                                        </tr>
+                                    </table>
+                                </form>
                             }
                         }
                         <a target="_blank" href="@Model.Movies.ElementAt(i+2).ImdbLink" class="btn btn-primary">Details</a>
