@@ -114,5 +114,25 @@ namespace MovieRecommender.Controllers
 
             return Redirect("/");
         }
+
+        public async Task<int> PredictMovie(int movieIndex)
+        {
+            var currentUser = HttpContext.Session.Get<User>(SessionExtensions.UserKey);
+
+            if (currentUser != default(User))
+            {
+                currentUser = await userService.GetUserByName(currentUser.Username);
+
+                if (currentUser.Rates.Count < 20)
+                {
+                    return -1;
+                };
+
+                var movieRate = await ratingService.PredictMovieRate(currentUser, movieIndex);
+                return movieRate;
+            }
+
+            return -1;
+        }
     }
 }

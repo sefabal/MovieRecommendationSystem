@@ -63,6 +63,8 @@
                                         </tr>
                                     </table>
                                 </form>
+                                <button onclick="PredictMovieClicked(@Model.Movies.ElementAt(i+1).Id)" class="btn btn-primary" type="button">Predict</button>
+                                <a href="/User/PredictMovie?movieIndex=@Model.Movies.ElementAt(i+1).Id">Test</a>
                             }
                         }
                         <a target="_blank" href="@Model.Movies.ElementAt(i+1).ImdbLink" class="btn btn-primary">Details</a>

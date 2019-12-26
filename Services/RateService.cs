@@ -2,6 +2,7 @@
 using MathWorks.MATLAB.NET.Arrays;
 using Microsoft.EntityFrameworkCore;
 using MovieRecommender.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -36,15 +37,19 @@ namespace MovieRecommender.Services
             return await this.movieContext.Rates.ToListAsync();
         }
 
-        public async Task PredictMovieRate(User predictedUser, int movieIndex)
+        public async Task<int> PredictMovieRate(User predictedUser, int movieIndex)
         {
             List<Rate> rates = await GetRates();
-            int[,] rateArray = new int[rates.Count, 4];
+            int[,] rateArray = new int[rates.Count-predictedUser.Rates.Count, 4];
 
             //Convert rates to input data set
             for (int i = 0; i < rates.Count; i++)
             {
                 var currentRate = rates[i];
+
+                if (currentRate.UserId == predictedUser.Id)
+                    continue;
+
                 rateArray[i, 0] = currentRate.UserId;
                 rateArray[i, 1] = currentRate.MovieId;
                 rateArray[i, 2] = currentRate.MovieRate;
@@ -70,8 +75,15 @@ namespace MovieRecommender.Services
             //mw[1] = bestSimilartityValues
             //mw[2] = guess for selected movie
             MWArray[] mW = calculateKNN.KNNCalculation(3, newValues, (MWNumericArray)userRates, movieIndex, 30);
-
+            
             var predictedVal = (double[,])mW[2].ToArray();
+
+            var value = predictedVal[0, 0];
+
+            var rounded = Convert.ToInt32(value);
+
+            return rounded;
+
         }
 
 
