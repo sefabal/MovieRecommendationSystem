@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieRecommender.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MovieRecommender.Services
@@ -14,10 +15,13 @@ namespace MovieRecommender.Services
 
         private readonly CalculateKNN calculateKNN;
 
-        public RateService(MovieContext movieContext, CalculateKNN calculateKNN)
+        private readonly PredictionHelper.PredictionHelper predictionHelper;
+
+        public RateService(MovieContext movieContext, CalculateKNN calculateKNN, PredictionHelper.PredictionHelper predictionHelper)
         {
             this.movieContext = movieContext;
             this.calculateKNN = calculateKNN;
+            this.predictionHelper = predictionHelper;
         }
 
         public async Task AddBulkRating(IEnumerable<Rate> rates)
@@ -37,22 +41,38 @@ namespace MovieRecommender.Services
             return await this.movieContext.Rates.ToListAsync();
         }
 
-        public async Task<int> PredictMovieRate(User predictedUser, int movieIndex)
+        public async Task<RateResult> PredictMovieRate(User predictedUser, int movieIndex)
         {
             List<Rate> rates = await GetRates();
-            int[,] rateArray = new int[rates.Count-predictedUser.Rates.Count, 4];
+            int[,] rateArray = new int[rates.Count - predictedUser.Rates.Count, 4];
+
+            var userCount = await movieContext.Users.CountAsync();
+
+            int[,] itemRates = new int[userCount, 1];
 
             //Convert rates to input data set
             for (int i = 0; i < rates.Count; i++)
             {
                 var currentRate = rates[i];
 
+                //discard user's rate
                 if (currentRate.UserId == predictedUser.Id)
                     continue;
+
+                if (currentRate.MovieId == movieIndex)
+                {
+                    itemRates[currentRate.UserId - 1, 0] = currentRate.MovieRate;
+                }
 
                 rateArray[i, 0] = currentRate.UserId;
                 rateArray[i, 1] = currentRate.MovieId;
                 rateArray[i, 2] = currentRate.MovieRate;
+            }
+
+            for (int i = 0; i < itemRates.Length; i++)
+            {
+                if (itemRates[i, 0] == 0)
+                    itemRates[i, 0] = -1;
             }
 
             //Create user-item dataset for calculating knn
@@ -68,24 +88,43 @@ namespace MovieRecommender.Services
             {
                 userRates[0, i] = -1;
             }
+
             predictedUserRates.ForEach(rate => userRates[0, rate.MovieId] = rate.MovieRate);
+
+            // trainSet, movieRates , userToGuessIndex, N
+            MWArray[] itemResult = predictionHelper.ItemBased(2, newValues, (MWNumericArray)itemRates, predictedUser.Id - 1, 30);
+
+            var itemPrediction = (double[,])itemResult[1].ToArray();
+
+            var roundedItem = -1;
+            var itemVal = itemPrediction[0, 0];
+            if (!Double.IsNaN(itemVal))
+                roundedItem = Convert.ToInt32(itemVal);
 
             //RESULT
             //mw[0] = distanceValues
             //mw[1] = bestSimilartityValues
             //mw[2] = guess for selected movie
-            MWArray[] mW = calculateKNN.KNNCalculation(3, newValues, (MWNumericArray)userRates, movieIndex, 30);
-            
-            var predictedVal = (double[,])mW[2].ToArray();
+            MWArray[] mW = predictionHelper.KNNCalculation(3, newValues, (MWNumericArray)userRates, movieIndex, 30);
 
-            var value = predictedVal[0, 0];
+            var userPrediction = (double[,])mW[2].ToArray();
 
-            var rounded = Convert.ToInt32(value);
-
-            return rounded;
-
+            var value = userPrediction[0, 0];
+            int roundedUser = -1;
+            if (!Double.IsNaN(value))
+            {
+                roundedUser = Convert.ToInt32(value);
+            }
+            return new RateResult { ItemResult = roundedItem, UserResult = roundedUser };
         }
+    }
 
+    public class RateResult
+    {
+        public int ItemResult { get; set; }
 
+        public int UserResult { get; set; }
+
+        public string Message { get; set; }
     }
 }

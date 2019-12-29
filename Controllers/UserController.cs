@@ -115,24 +115,24 @@ namespace MovieRecommender.Controllers
             return Redirect("/");
         }
 
-        public async Task<int> PredictMovie(int movieIndex)
+        public async Task<RateResult> PredictMovie(int movieIndex)
         {
             var currentUser = HttpContext.Session.Get<User>(SessionExtensions.UserKey);
-
+            var result = new RateResult();
             if (currentUser != default(User))
             {
                 currentUser = await userService.GetUserByName(currentUser.Username);
 
                 if (currentUser.Rates.Count < 20)
                 {
-                    return -1;
+                    result.Message = "You should rate more than 20 movie to get prediction";
+                    return result;
                 };
 
-                var movieRate = await ratingService.PredictMovieRate(currentUser, movieIndex);
-                return movieRate;
-            }
+                result = await ratingService.PredictMovieRate(currentUser, movieIndex);
+            };
 
-            return -1;
+            return result;
         }
     }
 }

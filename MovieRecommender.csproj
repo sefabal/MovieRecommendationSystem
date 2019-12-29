@@ -21,6 +21,10 @@
       <HintPath>KNNCalculation.dll</HintPath>
       <!--Path to .NET Assembly created by Library Compiler app-->
     </Reference>
+    <Reference Include="PredictionHelper">
+      <HintPath>PredictionHelper.dll</HintPath>
+      <!--Path to .NET Assembly created by Library Compiler app-->
+    </Reference>
     <Reference Include="MWArray">
       <HintPath>MWArray.dll</HintPath>
       <!--Path to MWArray.dll in the MATLAB Runtime-->

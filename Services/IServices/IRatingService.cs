@@ -12,6 +12,6 @@ namespace MovieRecommender.Services
 
         Task AddBulkRating(IEnumerable<Rate> rates);
 
-        Task<int> PredictMovieRate(User predictedUser, int movieIndex);
+        Task<RateResult> PredictMovieRate(User predictedUser, int movieIndex);
     }
 }
