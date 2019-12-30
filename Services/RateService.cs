@@ -1,4 +1,5 @@
-﻿using KNNCalculation;
+﻿using CreateModel;
+using KNNCalculation;
 using MathWorks.MATLAB.NET.Arrays;
 using Microsoft.EntityFrameworkCore;
 using MovieRecommender.Models;
@@ -17,11 +18,14 @@ namespace MovieRecommender.Services
 
         private readonly PredictionHelper.PredictionHelper predictionHelper;
 
-        public RateService(MovieContext movieContext, CalculateKNN calculateKNN, PredictionHelper.PredictionHelper predictionHelper)
+        private readonly CreateTrainingModel createModel;
+
+        public RateService(MovieContext movieContext, CalculateKNN calculateKNN, PredictionHelper.PredictionHelper predictionHelper, CreateTrainingModel createTraining)
         {
             this.movieContext = movieContext;
             this.calculateKNN = calculateKNN;
             this.predictionHelper = predictionHelper;
+            this.createModel = createTraining;
         }
 
         public async Task AddBulkRating(IEnumerable<Rate> rates)
@@ -43,6 +47,11 @@ namespace MovieRecommender.Services
 
         public async Task<RateResult> PredictMovieRate(User predictedUser, int movieIndex)
         {
+            MWArray[] models = createModel.CreateModel(2);
+
+            var userModel = models[0];
+            var itemModel = models[1];
+
             List<Rate> rates = await GetRates();
             int[,] rateArray = new int[rates.Count - predictedUser.Rates.Count, 4];
 
@@ -92,7 +101,7 @@ namespace MovieRecommender.Services
             predictedUserRates.ForEach(rate => userRates[0, rate.MovieId] = rate.MovieRate);
 
             // trainSet, movieRates , userToGuessIndex, N
-            MWArray[] itemResult = predictionHelper.ItemBased(2, newValues, (MWNumericArray)itemRates, predictedUser.Id - 1, 30);
+            MWArray[] itemResult = predictionHelper.ItemBased(2, itemModel, (MWNumericArray)itemRates, predictedUser.Id - 1, 60);
 
             var itemPrediction = (double[,])itemResult[1].ToArray();
 
@@ -105,7 +114,7 @@ namespace MovieRecommender.Services
             //mw[0] = distanceValues
             //mw[1] = bestSimilartityValues
             //mw[2] = guess for selected movie
-            MWArray[] mW = predictionHelper.KNNCalculation(3, newValues, (MWNumericArray)userRates, movieIndex, 30);
+            MWArray[] mW = predictionHelper.KNNCalculation(3, userModel, (MWNumericArray)userRates, movieIndex, 50);
 
             var userPrediction = (double[,])mW[2].ToArray();
 

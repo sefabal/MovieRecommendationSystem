@@ -32,6 +32,7 @@
           "Microsoft.EntityFrameworkCore.Tools": "3.1.0",
           "Microsoft.Extensions.Logging.Debug": "3.1.0",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "3.0.0",
+          "CreateModel": "1.0.0.0",
           "KNNCalculation": "1.0.0.0",
           "MWArray": "2.19.1.0",
           "PredictionHelper": "1.0.0.0",
@@ -2659,6 +2660,17 @@
           "System.Threading": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0"
+        }
+      },
+      "CreateModel/1.0.0.0": {
+        "runtime": {
+          "CreateModel.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        },
+        "compile": {
+          "CreateModel.dll": {}
         }
       },
       "KNNCalculation/1.0.0.0": {
@@ -5727,6 +5739,11 @@
       "sha512": "sha512-MYoTCP7EZ98RrANESW05J5ZwskKDoN0AuZ06ZflnowE50LTpbR5yRg3tHckTVm5j/m47stuGgCrCHWePyHS70Q==",
       "path": "system.xml.xmlserializer/4.3.0",
       "hashPath": "system.xml.xmlserializer.4.3.0.nupkg.sha512"
+    },
+    "CreateModel/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     },
     "KNNCalculation/1.0.0.0": {
       "type": "reference",

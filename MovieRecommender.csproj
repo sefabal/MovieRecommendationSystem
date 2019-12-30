@@ -21,6 +21,10 @@
       <HintPath>KNNCalculation.dll</HintPath>
       <!--Path to .NET Assembly created by Library Compiler app-->
     </Reference>
+    <Reference Include="CreateModel">
+      <HintPath>CreateModel.dll</HintPath>
+      <!--Path to .NET Assembly created by Library Compiler app-->
+    </Reference>
     <Reference Include="PredictionHelper">
       <HintPath>PredictionHelper.dll</HintPath>
       <!--Path to .NET Assembly created by Library Compiler app-->
