@@ -48,34 +48,37 @@ namespace MovieRecommender.Services
         public async Task<RateResult> PredictMovieRate(User predictedUser, int movieIndex)
         {
             MWArray[] models = createModel.CreateModel(2);
-
+            
             var userModel = models[0];
             var itemModel = models[1];
 
             List<Rate> rates = await GetRates();
-            int[,] rateArray = new int[rates.Count - predictedUser.Rates.Count, 4];
+            // - predictedUser.Rates.Count
+            int[,] rateArray = new int[rates.Count, 4];
 
             var userCount = await movieContext.Users.CountAsync();
 
             int[,] itemRates = new int[userCount, 1];
 
             //Convert rates to input data set
+            int count = 0;
             for (int i = 0; i < rates.Count; i++)
             {
                 var currentRate = rates[i];
 
-                //discard user's rate
-                if (currentRate.UserId == predictedUser.Id)
-                    continue;
+                ////discard user's rate
+                //if (currentRate.UserId == predictedUser.Id)
+                //    continue;
 
                 if (currentRate.MovieId == movieIndex)
                 {
                     itemRates[currentRate.UserId - 1, 0] = currentRate.MovieRate;
                 }
 
-                rateArray[i, 0] = currentRate.UserId;
-                rateArray[i, 1] = currentRate.MovieId;
-                rateArray[i, 2] = currentRate.MovieRate;
+                rateArray[count, 0] = currentRate.UserId;
+                rateArray[count, 1] = currentRate.MovieId;
+                rateArray[count, 2] = currentRate.MovieRate;
+                count++;
             }
 
             for (int i = 0; i < itemRates.Length; i++)
@@ -98,10 +101,10 @@ namespace MovieRecommender.Services
                 userRates[0, i] = -1;
             }
 
-            predictedUserRates.ForEach(rate => userRates[0, rate.MovieId] = rate.MovieRate);
+            predictedUserRates.ForEach(rate => userRates[0, rate.MovieId-1] = rate.MovieRate);
 
             // trainSet, movieRates , userToGuessIndex, N
-            MWArray[] itemResult = predictionHelper.ItemBased(2, itemModel, (MWNumericArray)itemRates, predictedUser.Id - 1, 60);
+            MWArray[] itemResult = predictionHelper.ItemBased(2, newValues, (MWNumericArray)itemRates, predictedUser.Id , 60);
 
             var itemPrediction = (double[,])itemResult[1].ToArray();
 
